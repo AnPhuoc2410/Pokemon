@@ -23,3 +23,21 @@ function upDate(previewPic){
    
      document.getElementById('image').innerHTML= "Hover over an image below to display here."  
      }
+     function change(obj){
+      var tag = document.getElementById('demo');
+      tag.src = obj.src;
+     }
+     function unchange(){
+      var tag = document.getElementById("demo");
+      tag.src = "groudon.png";
+     }
+
+function myFunction( obj ){
+obj.style.position="fixed";
+obj.style.bottom=0;
+obj.style.right=0;
+obj.style.width="100px";
+obj.style.height="100px";
+obj.style.backgroundColor="blue";
+obj.innerHTML="Right-Corner"
+}
