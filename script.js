@@ -25,11 +25,12 @@ function upDate(previewPic){
      }
      function change(obj){
       var tag = document.getElementById('demo');
-      tag.src = obj.src;
+      
+      tag.src = "./image/trollface.png";
      }
      function unchange(){
       var tag = document.getElementById("demo");
-      tag.src = "groudon.png";
+      tag.src = "./image/groudon.png";
      }
 
 function myFunction( obj ){

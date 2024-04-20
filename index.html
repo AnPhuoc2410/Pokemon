@@ -11,9 +11,9 @@
     <title>HTML Tags</title>
 </head>
 
-<body>
-
-    <p>Click <a href="https://www.youtube.com/watch?v=Z1ftOQcSpO4"> here</a></p>
+<body >
+    <div class="container">
+        <p>Click <a href="https://www.youtube.com/watch?v=Z1ftOQcSpO4"> here</a></p>
     <form>
         <h1>Dien form</h1>
         Name:<input name="name" type="text" /> <br>
@@ -27,12 +27,12 @@
         <input type="datetime-local" name="datetime-local" value="today">
     </form>
     <audio controls>
-        <source src="./SG_audio_10.mp3" type="audio/mpeg">
+        <source src="./SG_audio_10.mp3" type="audio/mp3">
     </audio>
-    <ul>
-        <li style="font-weight: bold;color: green;">Sceptile<br></li><img
+    <ul class="display_pokemon">
+        <li style="font-weight: bold;color: green;">Sceptile<br><img
             src="https://gamingfyi.com/wp-content/uploads/2021/12/Gen-3-Starter-Sceptile.png" alt="Sceptile"
-            width="60%">
+            width="60%"></li>
         <br>
         <span class="status" id="Defend">Defend</span><meter min="0" max="125" value="50"></meter> <br>
         <span class="status" id="Attack">Streng</span><meter min="0" max="125" value="80"></meter> <br>
@@ -60,11 +60,11 @@
 	</div>
 	
 	<img class = "preview" alt = "Life " 
-    src = "xernas.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
+    src = "./image/xernas.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
     <img class = "preview" alt = "Sky" 
-    src = "rayquaza.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
+    src = "./image/rayquaza.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
     <img class = "preview" alt = "Nightmare" 
-    src = "darkrai.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
+    src = "./image/darkrai.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
     
     <hr>
     <h2>London</h2>
@@ -85,13 +85,17 @@
         <p>rome has almost 3 million inhabitants.</p>
     </details>
     <br>
-    <div style="text-align: center" class="status">
-        <img class="img2" src="groudon.png" alt="groudon" id="demo" onclick="unchange()">
-        <img class="img2" src="char.png" alt="charizard" onmouseover="change(this)">
+    
+    <div class="vuong">
+        <img class="img2" src="./image/groudon.png" alt="groudon" id="demo" onclick="unchange()">
+        <img class="img2" src="./image/char.png" alt="charizard" onmouseover="change(this)">
     </div>
+
     <div onclick="myFunction(this)" class="right-corner">Click to move right-corner</div>
+    </div>
+
+    <div class="footer">&copyPhuoc 2024</div>
 </body>
 
-    <p style="text-align: center;"> <b><i>&copyPhuoc 2024</i></b></p>
 
 </html>

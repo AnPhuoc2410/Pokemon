@@ -18,12 +18,23 @@
 meter {
     border-radius: 2px solid #333;
     padding: 0.2px;
+    margin: 0 auto;
+    width: 20%;
 }
 
-body {
-    margin: 2%;
-    border: 1px solid black;
-    background-color: #b3b3b3;
+.display_pokemon{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    list-style: none;
+}
+.display_pokemon img{
+    text-align: center;
+    width: 50%;
+}
+.display_pokemon span{
+    justify-content: center;
 }
 
 #image {
@@ -85,4 +96,20 @@ body {
     font-family: Times, serif;
     color: black;
     
+}
+.footer{
+    background-color: cadetblue;
+    color: burlywood;
+    text-align: center;
+    padding: 15px;
+    margin-top: 10px;
+    width: 100%;
+}
+.vuong{
+    display: flex;
+    width: auto;
+
+}
+.vuong img{
+    border:solid black;
 }
