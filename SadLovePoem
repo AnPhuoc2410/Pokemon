@@ -1,0 +1,34 @@
+public class SadLovePoem {
+    public static void main(String[] args) {
+        String[] loveLines = {
+            "You were my heart 💔",
+            "In every line of my code,",
+            "My love for you once grew.",
+            "Our love, forever lost,",
+            "In the silence of the void."
+        };
+
+        for (String line : loveLines) {
+            log(line);
+        }
+
+        boolean love = askLoveStatus();
+        if (love) {
+            log("A fleeting moment of joy... ");
+        } else {
+            log("A lifetime of longing... ");
+        }
+    }
+
+    private static boolean askLoveStatus() {
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        System.out.print("Did you ever love me? (Y/N): ");
+        String response = scanner.nextLine().trim().toUpperCase();
+        scanner.close();
+        return response.equals("Y");
+    }
+
+    private static void log(String message) {
+        System.out.println(message);
+    }
+}
