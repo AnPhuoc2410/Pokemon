@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Love Poem</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="./image/heart.png" type="image/png">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -16,12 +18,23 @@
         .heart {
             color: #e63946;
         }
+        #poem-container {
+            height: 200px; /* Adjust height as needed */
+            overflow: hidden;
+            position: relative;
+        }
         #poem {
             background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: inline-block;
+            position: absolute;
+            animation: slide 10s linear infinite;
+        }
+        @keyframes slide {
+            0% { top: 100%; }
+            100% { top: -100%; }
         }
         .line {
             font-family: 'Dancing Script', cursive;
@@ -43,18 +56,29 @@
         button:hover {
             background-color: #d62828;
         }
+        .interaction {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div id="poem">
-        <p class="line">You are my heart <span class="heart">❤</span></p>
-        <p class="line">In every line of my code,</p>
-        <p class="line">My love for you grows.</p>
-        <p class="line">Our love, forever encrypted,</p>
-        <p class="line">In the language only we know.</p>
+    <div id="poem-container">
+        <div id="poem">
+            <p class="line">You are my heart <span class="heart">❤</span></p>
+            <p class="line">In every line of my code,</p>
+            <p class="line">My love for you grows.</p>
+            <p class="line">Our love, forever encrypted,</p>
+            <p class="line">In the language only we know.</p>
+            <p class="line">With every keystroke,</p>
+            <p class="line">My feelings overflow.</p>
+            <p class="line">In the syntax of our hearts,</p>
+            <p class="line">Our love continues to show.</p>
+        </div>
     </div>
-    <button onclick="askLoveStatus()">Do you love me? (Y/N)</button>
-    <p id="response"></p>
+    <div class="interaction">
+        <button onclick="askLoveStatus()"><i class="fas fa-heart"></i> Do you love me? (Y/N)</button>
+        <p id="response"></p>
+    </div>
 
     <script>
         function askLoveStatus() {
