@@ -1,92 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./image/pokeball.png" type="image/png">
+    <title>Who's That Pokémon?</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="script.js"></script>
-    <title>HTML Tags</title>
 </head>
-
-<body >
-    <div class="container">
-        <p>Click <a href="https://www.youtube.com/watch?v=Z1ftOQcSpO4"> here</a></p>
-        <p><a href="you.html">You click here </a></p>
-    <form>
-        <h1>Dien form</h1>
-        Name:<input name="name" type="text" /> <br>
-        Age:<input max="99" min="1" name="age" step="1" type="number" value="0" />
-        <br />
-        Checkbox: <input type="checkbox" name="terms" value="checked" />
-        I accept <br />
-        Radio: <input type="radio" name="sex" value="male" /> Male
-        <input type="radio" name="sex" value="Female" /> Female <br>
-        <input type="submit" value="Sumbit now"><br>
-        <input type="datetime-local" name="datetime-local" value="today">
-    </form>
-    <audio controls>
-        <source src="./SG_audio_10.mp3" type="audio/mp3">
-    </audio>
-    <ul class="display_pokemon">
-        <li style="font-weight: bold;color: green;">Sceptile<br><img
-            src="https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/254.png" alt="Sceptile"
-            width="60%"></li>
-        <br>
-        <span class="status" id="Defend">Defend</span><meter min="0" max="125" value="50"></meter> <br>
-        <span class="status" id="Attack">Streng</span><meter min="0" max="125" value="80"></meter> <br>
-        <span class="status" id="Speed">Speed</span><meter min="0" max="125" value="120"></meter> <br>
-
-            <li style="font-weight: bold;color: rgb(255, 119, 0);">Blaziken<br><img
-                    src="https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/257.png" alt="Blaziken"
-                    width="60%"></li>
-            <br>
-        <span class="status" id="Defend">Defend</span><meter min="0" max="125" value="100"></meter> <br>
-        <span class="status" id="Attack">Streng</span><meter min="0" max="125" value="90"></meter> <br>
-        <span class="status" id="Speed">Speed</span><meter min="0" max="125" value="80"></meter> <br>
-            <li style="font-weight: bold;color: cyan;">Swampert <br><img
-                    src="https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/260.png" alt="Swampert"
-                    width="60%"></li>
-            <br>
-        <span class="status" id="Defend">Defend</span><meter min="0" max="125" value="100"></meter> <br>
-        <span class="status" id="Attack">Streng</span><meter min="0" max="125" value="80"></meter> <br>
-        <span class="status" id="Speed">Speed</span><meter min=" 0" max="125" value="60"></meter> <br>
-    </ul>
-    <!-- <img src="rayquaza.jpg" class="rounded-circle" alt="Rayquaza" width="60%"> -->
-
-    <div id = "image">
-		Hover over an image below to display here.
-	</div>
-	
-	<img class = "preview" alt = "Life " 
-    src = "./image/xernas.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
-    <img class = "preview" alt = "Sky" 
-    src = "./image/rayquaza.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
-    <img class = "preview" alt = "Nightmare" 
-    src = "./image/darkrai.jpg" onmouseover = "upDate(this)" onmouseout = "unDo()">
-    
-    <hr>
-    
-    <br>
-    
-    <div class="vuong">
-        <img class="img2" src="./image/groudon.png" alt="groudon" id="demo" onclick="unchange()">
-        <img class="img2" src="./image/char.png" alt="charizard" onmouseover="change(this)">
+<body>
+    <h1>Who's That Pokémon?</h1>
+    <div class="game-container">
+        <img id="pokemon-image" class="pokemon-image" src="" alt="Hidden Pokémon">
+        <div id="choices-container" class="choices-container"></div>
+        <button id="next-button" class="next-btn" onclick="fetchPokemon()">Next Pokémon</button>
     </div>
 
-    <div onclick="myFunction(this)" class="right-corner">Click to move right-corner</div>
-    </div>
+    <script>
+        let currentPokemon = {};
+        const pokeApiUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
-    <div class="footer">&copyPhuoc 2024</div>
+        async function fetchPokemon() {
+            resetGame();
+
+            const randomId = Math.floor(Math.random() * 898) + 1;
+            const correctPokemon = await getPokemonData(randomId);
+            currentPokemon = correctPokemon;
+
+            // Fetch 3 incorrect Pokémon for multiple-choice options
+            const choices = [correctPokemon];
+            while (choices.length < 4) {
+                const randomId = Math.floor(Math.random() * 898) + 1;
+                const pokemon = await getPokemonData(randomId);
+
+                if (!choices.some(p => p.name === pokemon.name)) {
+                    choices.push(pokemon);
+                }
+            }
+
+            // Shuffle the choices array
+            shuffleArray(choices);
+
+            // Display the Pokémon silhouette and options
+            document.getElementById('pokemon-image').src = correctPokemon.image;
+            document.getElementById('pokemon-image').style.filter = 'brightness(0)';
+            const choicesContainer = document.getElementById('choices-container');
+            choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'choice-btn';
+                button.textContent = choice.name;
+                button.onclick = () => checkAnswer(choice.name);
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        async function getPokemonData(id) {
+            const response = await fetch(`${pokeApiUrl}${id}`);
+            const data = await response.json();
+            return {
+                name: data.name,
+                image: data.sprites.front_default
+            };
+        }
+
+        function checkAnswer(selectedName) {
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(button => {
+                button.disabled = true; // Disable all buttons after selection
+                if (button.textContent === currentPokemon.name) {
+                    button.classList.add('correct'); // Highlight correct choice
+                } else if (button.textContent === selectedName) {
+                    button.classList.add('incorrect'); // Highlight incorrect choice
+                }
+            });
+            document.getElementById('pokemon-image').style.filter = 'brightness(1)';
+            document.getElementById('next-button').style.display = 'inline-block'; // Show Next button
+        }
+
+        function resetGame() {
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = ''; // Clear previous options
+            document.getElementById('next-button').style.display = 'none'; // Hide Next button
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Load the first Pokémon on page load
+        window.onload = fetchPokemon;
+    </script>
 </body>
-
-<h4 class="sinopse">Sinopse</h4>
-                    <p class="text-sinopse conteudo">Após sofrer um vexame na Copa
-                        do Mundo de 2018, a seleção japonesa sofre para se recompor. Falta ao time um artilheiro, uma
-                        estrela capaz de guiá-los à vitória. Com o intuito de criar um atacante com fome de bola e sede
-                        de vitória, capaz de virar jogos tidos como impossíveis, a Confederação Japonesa de Futebol
-                        reune 300 dos melhores jogadores de base do país em um só lugar. Centenas de jovens vão se
-                        enfrentar numa batalha de músculos e de egos para provar que são os melhores.</p>
 </html>
