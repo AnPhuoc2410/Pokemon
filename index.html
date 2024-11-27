@@ -10,13 +10,21 @@
 <body>
     <h1>Who's That Pokémon?</h1>
     <div class="game-container">
-        <img id="pokemon-image" class="pokemon-image" src="" alt="Hidden Pokémon">
+        <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
+        <div id="loading-spinner" class="loading-spinner"></div>
+        <div id="score">Score: 0</div>
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
         <div id="choices-container" class="choices-container"></div>
-        <button id="next-button" class="next-btn" onclick="fetchPokemon()">Next Pokémon</button>
+        <button id="next-btn" class="next-btn">Next</button>
     </div>
 
     <script>
         let currentPokemon = {};
+        let score = 0;
+        let totalQuestions = 10;
+        let currentQuestion = 0;
         const pokeApiUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
         async function fetchPokemon() {
@@ -29,21 +37,43 @@
             // Fetch 3 incorrect Pokémon for multiple-choice options
             const choices = [correctPokemon];
             while (choices.length < 4) {
-                const randomId = Math.floor(Math.random() * 898) + 1;
-                const pokemon = await getPokemonData(randomId);
-
-                if (!choices.some(p => p.name === pokemon.name)) {
-                    choices.push(pokemon);
+                const randomChoiceId = Math.floor(Math.random() * 898) + 1;
+                if (!choices.some(pokemon => pokemon.id === randomChoiceId)) {
+                    const choice = await getPokemonData(randomChoiceId);
+                    choices.push(choice);
                 }
             }
 
-            // Shuffle the choices array
-            shuffleArray(choices);
+            // Shuffle choices
+            choices.sort(() => Math.random() - 0.5);
 
             // Display the Pokémon silhouette and options
             document.getElementById('pokemon-image').src = correctPokemon.image;
-            document.getElementById('pokemon-image').style.filter = 'brightness(0)';
+            renderChoices(choices);
+        }
+
+        async function getPokemonData(id) {
+            showLoadingSpinner();
+            try {
+                const response = await fetch(`${pokeApiUrl}${id}`);
+                const data = await response.json();
+                return {
+                    id: data.id,
+                    name: data.name,
+                    image: data.sprites.front_default
+                };
+            } catch (error) {
+                console.error('Failed to fetch Pokémon data:', error);
+                alert('Error fetching Pokémon. Please try again.');
+                return { id: null, name: 'Unknown', image: '' };
+            } finally {
+                hideLoadingSpinner();
+            }
+        }
+
+        function renderChoices(choices) {
             const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = ''; // Clear previous choices
             choices.forEach(choice => {
                 const button = document.createElement('button');
                 button.className = 'choice-btn';
@@ -53,44 +83,47 @@
             });
         }
 
-        async function getPokemonData(id) {
-            const response = await fetch(`${pokeApiUrl}${id}`);
-            const data = await response.json();
-            return {
-                name: data.name,
-                image: data.sprites.front_default
-            };
-        }
-
         function checkAnswer(selectedName) {
             const buttons = document.querySelectorAll('.choice-btn');
             buttons.forEach(button => {
                 button.disabled = true; // Disable all buttons after selection
                 if (button.textContent === currentPokemon.name) {
                     button.classList.add('correct'); // Highlight correct choice
+                    score++;
+                    document.getElementById('pokemon-image').style.filter = 'none'; // Reveal the Pokémon image
                 } else if (button.textContent === selectedName) {
                     button.classList.add('incorrect'); // Highlight incorrect choice
                 }
             });
-            document.getElementById('pokemon-image').style.filter = 'brightness(1)';
-            document.getElementById('next-button').style.display = 'inline-block'; // Show Next button
+            updateScore();
+            setTimeout(() => {
+                document.getElementById('next-btn').style.display = 'block'; // Show the next button after a delay
+            }, 1000);
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score}`;
+            document.getElementById('progress-bar').style.width = `${(currentQuestion / totalQuestions) * 100}%`;
         }
 
         function resetGame() {
-            const choicesContainer = document.getElementById('choices-container');
-            choicesContainer.innerHTML = ''; // Clear previous options
-            document.getElementById('next-button').style.display = 'none'; // Hide Next button
+            document.getElementById('next-btn').style.display = 'none'; // Hide the next button
+            document.getElementById('pokemon-image').style.filter = 'brightness(0)'; // Reset image filter
+            currentQuestion++;
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
+        function showLoadingSpinner() {
+            document.getElementById('loading-spinner').style.display = 'block';
         }
 
-        // Load the first Pokémon on page load
-        window.onload = fetchPokemon;
+        function hideLoadingSpinner() {
+            document.getElementById('loading-spinner').style.display = 'none';
+        }
+
+        document.getElementById('next-btn').onclick = fetchPokemon;
+
+        // Initial fetch
+        fetchPokemon();
     </script>
 </body>
 </html>

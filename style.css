@@ -78,7 +78,6 @@ h1 {
 .choice-btn.incorrect {
     background: #ef476f;
 }
-
 /* Next Button */
 .next-btn {
     display: none;
@@ -95,6 +94,51 @@ h1 {
 
 .next-btn:hover {
     background: #118ab2;
+}
+.silhouette {
+    filter: brightness(0) invert(1); /* Turns the image into a black silhouette */
+    pointer-events: none; /* Disables dragging */
+    -webkit-user-select: none; /* Prevents selecting the image */
+    user-select: none; /* Prevents selecting the image */
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Score Display */
+#score {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* Progress Bar */
+#progress-bar-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+#progress-bar {
+    width: 0;
+    height: 10px;
+    background: #06d6a0;
+    border-radius: 10px;
+    transition: width 0.3s ease;
 }
 
 /* Responsive Design */
