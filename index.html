@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,26 +8,57 @@
     <title>Who's That Pokémon?</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>Who's That Pokémon?</h1>
-    <div class="game-container">
-        <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
-        <div id="loading-spinner" class="loading-spinner"></div>
-        <div id="score">Score: 0</div>
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button id="play-game-btn">Play Game</button>
+        <button id="inventory-btn">Inventory</button>
+    </nav>
+
+    <!-- Game Section -->
+    <section id="game-section" class="hidden">
+        <h1>Who's That Pokémon?</h1>
+        <div class="game-container">
+            <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
+            <div id="loading-spinner" class="loading-spinner"></div>
+            <div id="score">Score: 0</div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="choices-container" class="choices-container"></div>
+            <button id="catch-btn" class="catch-btn ">Catch</button>
+            <button id="next-btn" class="next-btn ">Next</button>
         </div>
-        <div id="choices-container" class="choices-container"></div>
-        <button id="next-btn" class="next-btn">Next</button>
-    </div>
+    </section>
+
+    <!-- Inventory Section -->
+    <section id="inventory-section" class="hidden">
+        <h1>Your Pokémon Inventory</h1>
+        <div id="inventory-container">
+            <p>No Pokémon caught yet!</p>
+        </div>
+    </section>
 
     <script>
         let currentPokemon = {};
         let score = 0;
+        let caughtPokemon = [];
         let totalQuestions = 10;
         let currentQuestion = 0;
         const pokeApiUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
+        // Navigation buttons
+        document.getElementById('play-game-btn').onclick = () => toggleSection('game-section');
+        document.getElementById('inventory-btn').onclick = () => toggleSection('inventory-section');
+
+        function toggleSection(sectionId) {
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('inventory-section').classList.add('hidden');
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Fetch and render Pokémon
         async function fetchPokemon() {
             resetGame();
 
@@ -91,15 +123,18 @@
                     button.classList.add('correct'); // Highlight correct choice
                     score++;
                     document.getElementById('pokemon-image').style.filter = 'none'; // Reveal the Pokémon image
+                    document.getElementById('catch-btn').classList.remove('hidden'); // Show the "Catch" button
                 } else if (button.textContent === selectedName) {
                     button.classList.add('incorrect'); // Highlight incorrect choice
                 }
             });
             updateScore();
+            // Ensure "Next" button shows after a delay
             setTimeout(() => {
-                document.getElementById('next-btn').style.display = 'block'; // Show the next button after a delay
+                document.getElementById('next-btn').classList.remove('hidden'); // Show the "Next" button
             }, 1000);
         }
+
 
         function updateScore() {
             document.getElementById('score').textContent = `Score: ${score}`;
@@ -107,7 +142,8 @@
         }
 
         function resetGame() {
-            document.getElementById('next-btn').style.display = 'none'; // Hide the next button
+            document.getElementById('next-btn').classList.add('hidden'); // Hide the next button
+            document.getElementById('catch-btn').classList.add('hidden'); // Hide the catch button
             document.getElementById('pokemon-image').style.filter = 'brightness(0)'; // Reset image filter
             currentQuestion++;
         }
@@ -120,10 +156,37 @@
             document.getElementById('loading-spinner').style.display = 'none';
         }
 
+        // Catch Pokémon
+        document.getElementById('catch-btn').onclick = () => {
+            if (!caughtPokemon.some(pokemon => pokemon.id === currentPokemon.id)) {
+                caughtPokemon.push(currentPokemon);
+                updateInventory();
+            }
+        };
+
+        function updateInventory() {
+            const inventoryContainer = document.getElementById('inventory-container');
+            inventoryContainer.innerHTML = ''; // Clear previous inventory
+            if (caughtPokemon.length === 0) {
+                inventoryContainer.innerHTML = '<p>No Pokémon caught yet!</p>';
+            } else {
+                caughtPokemon.forEach(pokemon => {
+                    const pokemonDiv = document.createElement('div');
+                    pokemonDiv.className = 'pokemon-item';
+                    pokemonDiv.innerHTML = `
+                        <img src="${pokemon.image}" alt="${pokemon.name}">
+                        <p>${pokemon.name}</p>
+                    `;
+                    inventoryContainer.appendChild(pokemonDiv);
+                });
+            }
+        }
+
         document.getElementById('next-btn').onclick = fetchPokemon;
 
         // Initial fetch
         fetchPokemon();
     </script>
 </body>
+
 </html>
