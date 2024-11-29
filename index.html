@@ -10,55 +10,35 @@
 </head>
 
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <button id="play-game-btn">Play Game</button>
-        <button id="inventory-btn">Inventory</button>
-    </nav>
+    <h1>Who's That Pokémon?</h1>
+    <div id="details-container" class="details-container">
+        <h2>Pokémon Details</h2>
+        <p id="pokemon-details"></p>
+    </div>
+    <button id="view-details-btn" class="view-details-btn" style="display: none;">View Details</button>
 
-    <!-- Game Section -->
-    <section id="game-section" class="hidden">
-        <h1>Who's That Pokémon?</h1>
-        <div class="game-container">
-            <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
-            <div id="loading-spinner" class="loading-spinner"></div>
-            <div id="score">Score: 0</div>
-            <div id="progress-bar-container">
-                <div id="progress-bar"></div>
-            </div>
-            <div id="choices-container" class="choices-container"></div>
-            <button id="catch-btn" class="catch-btn ">Catch</button>
-            <button id="next-btn" class="next-btn ">Next</button>
+    <div class="game-container">
+        <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
+        <div id="loading-spinner" class="loading-spinner"></div>
+        <div id="score">Score: 0</div>
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
         </div>
-    </section>
-
-    <!-- Inventory Section -->
-    <section id="inventory-section" class="hidden">
-        <h1>Your Pokémon Inventory</h1>
-        <div id="inventory-container">
-            <p>No Pokémon caught yet!</p>
-        </div>
-    </section>
+        <div id="choices-container" class="choices-container"></div>
+        <button id="next-btn" class="next-btn">Next</button>
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Enter Pokémon name or ID">
+        <button id="search-btn">Search</button>
+    </div>
 
     <script>
         let currentPokemon = {};
         let score = 0;
-        let caughtPokemon = [];
         let totalQuestions = 10;
         let currentQuestion = 0;
         const pokeApiUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
-        // Navigation buttons
-        document.getElementById('play-game-btn').onclick = () => toggleSection('game-section');
-        document.getElementById('inventory-btn').onclick = () => toggleSection('inventory-section');
-
-        function toggleSection(sectionId) {
-            document.getElementById('game-section').classList.add('hidden');
-            document.getElementById('inventory-section').classList.add('hidden');
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        // Fetch and render Pokémon
         async function fetchPokemon() {
             resetGame();
 
@@ -85,23 +65,63 @@
         }
 
         async function getPokemonData(id) {
+            // Show loading spinner while fetching data
             showLoadingSpinner();
             try {
                 const response = await fetch(`${pokeApiUrl}${id}`);
+                if (!response.ok) {
+                    throw new Error(`Pokémon with ID ${id} not found.`);
+                }
+
                 const data = await response.json();
+
+                // Transform data into a more usable format
                 return {
-                    id: data.id,
-                    name: data.name,
-                    image: data.sprites.front_default
+                    id: data.id, // Pokémon ID
+                    name: data.name.charAt(0).toUpperCase() + data.name.slice(1), // Capitalize name
+                    image: data.sprites.front_default || '', // Pokémon front image
+                    types: data.types.map(type => type.type.name).join(', '), // All types
+                    abilities: data.abilities.map(ability => ability.ability.name).join(', '), // All abilities
+                    stats: data.stats.map(stat => `${stat.stat.name}: ${stat.base_stat}`).join(', '), // Stats
+                    height: data.height, // Height
+                    weight: data.weight, // Weight
+                    baseExperience: data.base_experience // Base experience
                 };
             } catch (error) {
-                console.error('Failed to fetch Pokémon data:', error);
-                alert('Error fetching Pokémon. Please try again.');
-                return { id: null, name: 'Unknown', image: '' };
+                console.error(`Failed to fetch Pokémon data: ${error.message}`);
+                alert(`Error: Unable to fetch Pokémon details. ${error.message}`);
+                return {
+                    id: null,
+                    name: 'Unknown',
+                    image: '',
+                    types: 'Unknown',
+                    abilities: 'Unknown',
+                    stats: 'Unknown',
+                    height: 'Unknown',
+                    weight: 'Unknown',
+                    baseExperience: 'Unknown'
+                };
             } finally {
+                // Hide loading spinner after fetching data
                 hideLoadingSpinner();
             }
         }
+
+        function displayPokemonDetails(pokemon) {
+            // Populate the Pokémon details section
+            const detailsContainer = document.getElementById('pokemon-details');
+            detailsContainer.innerHTML = `
+        <strong>ID:</strong> ${pokemon.id}<br>
+        <strong>Name:</strong> ${pokemon.name}<br>
+        <strong>Types:</strong> ${pokemon.types}<br>
+        <strong>Abilities:</strong> ${pokemon.abilities}<br>
+        <strong>Stats:</strong> ${pokemon.stats}<br>
+        <strong>Height:</strong> ${pokemon.height} decimeters<br>
+        <strong>Weight:</strong> ${pokemon.weight} hectograms<br>
+        <strong>Base Experience:</strong> ${pokemon.baseExperience}
+    `;
+        }
+
 
         function renderChoices(choices) {
             const choicesContainer = document.getElementById('choices-container');
@@ -123,15 +143,20 @@
                     button.classList.add('correct'); // Highlight correct choice
                     score++;
                     document.getElementById('pokemon-image').style.filter = 'none'; // Reveal the Pokémon image
-                    document.getElementById('catch-btn').classList.remove('hidden'); // Show the "Catch" button
                 } else if (button.textContent === selectedName) {
                     button.classList.add('incorrect'); // Highlight incorrect choice
                 }
             });
+
+            // Show the "View Details" button after selection
+            const viewDetailsBtn = document.getElementById('view-details-btn');
+            viewDetailsBtn.style.display = 'block';
+
             updateScore();
-            // Ensure "Next" button shows after a delay
+
+            // Show the "Next" button after a delay
             setTimeout(() => {
-                document.getElementById('next-btn').classList.remove('hidden'); // Show the "Next" button
+                document.getElementById('next-btn').style.display = 'block';
             }, 1000);
         }
 
@@ -142,11 +167,12 @@
         }
 
         function resetGame() {
-            document.getElementById('next-btn').classList.add('hidden'); // Hide the next button
-            document.getElementById('catch-btn').classList.add('hidden'); // Hide the catch button
+            document.getElementById('next-btn').style.display = 'none'; // Hide the next button
+            document.getElementById('view-details-btn').style.display = 'none'; // Hide the "View Details" button
             document.getElementById('pokemon-image').style.filter = 'brightness(0)'; // Reset image filter
             currentQuestion++;
         }
+
 
         function showLoadingSpinner() {
             document.getElementById('loading-spinner').style.display = 'block';
@@ -156,33 +182,25 @@
             document.getElementById('loading-spinner').style.display = 'none';
         }
 
-        // Catch Pokémon
-        document.getElementById('catch-btn').onclick = () => {
-            if (!caughtPokemon.some(pokemon => pokemon.id === currentPokemon.id)) {
-                caughtPokemon.push(currentPokemon);
-                updateInventory();
-            }
+        document.getElementById('next-btn').onclick = fetchPokemon;
+        document.getElementById('view-details-btn').onclick = async () => {
+            const detailsContainer = document.getElementById('details-container');
+            const pokemonDetails = await getPokemonData(currentPokemon.id);
+
+            // Populate the details section
+            detailsContainer.style.display = 'block'; // Show the details container
+            document.getElementById('pokemon-details').innerHTML = `
+        <strong>ID:</strong> ${pokemonDetails.id}<br>
+        <strong>Name:</strong> ${pokemonDetails.name}<br>
+        <strong>Types:</strong> ${pokemonDetails.types}<br>
+        <strong>Abilities:</strong> ${pokemonDetails.abilities}<br>
+        <strong>Stats:</strong> ${pokemonDetails.stats}<br>
+        <strong>Height:</strong> ${pokemonDetails.height} decimeters<br>
+        <strong>Weight:</strong> ${pokemonDetails.weight} hectograms<br>
+        <strong>Base Experience:</strong> ${pokemonDetails.baseExperience}
+    `;
         };
 
-        function updateInventory() {
-            const inventoryContainer = document.getElementById('inventory-container');
-            inventoryContainer.innerHTML = ''; // Clear previous inventory
-            if (caughtPokemon.length === 0) {
-                inventoryContainer.innerHTML = '<p>No Pokémon caught yet!</p>';
-            } else {
-                caughtPokemon.forEach(pokemon => {
-                    const pokemonDiv = document.createElement('div');
-                    pokemonDiv.className = 'pokemon-item';
-                    pokemonDiv.innerHTML = `
-                        <img src="${pokemon.image}" alt="${pokemon.name}">
-                        <p>${pokemon.name}</p>
-                    `;
-                    inventoryContainer.appendChild(pokemonDiv);
-                });
-            }
-        }
-
-        document.getElementById('next-btn').onclick = fetchPokemon;
 
         // Initial fetch
         fetchPokemon();
