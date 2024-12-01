@@ -11,17 +11,11 @@
 
 <body>
     <h1>Who's That Pokémon?</h1>
-    <li*4>
-        <p>Test your knowledge of Pokémon by guessing the Pokémon based on its silhouette.</p>
-        <p>Choose the correct Pokémon from the multiple-choice options.</p>
-        <p>Click the "View Details" button to see more information about the Pokémon.</p>
-        <p>Click the "Next" button to move on to the next Pokémon.</p>
     <div id="details-container" class="details-container">
         <h2>Pokémon Details</h2>
         <p id="pokemon-details"></p>
     </div>
-    <button id="view-details-btn" class="view-details-btn" style="display: none;">View Details</button>
-
+    <button id="view-details-btn" class="view-details-btn">View Details</button>
     <div class="game-container">
         <img id="pokemon-image" class="pokemon-image silhouette" src="" alt="Hidden Pokémon">
         <div id="loading-spinner" class="loading-spinner"></div>
@@ -173,6 +167,7 @@
 
         function resetGame() {
             document.getElementById('next-btn').style.display = 'none'; // Hide the next button
+            document.getElementById('details-container').style.display = 'none';
             document.getElementById('view-details-btn').style.display = 'none'; // Hide the "View Details" button
             document.getElementById('pokemon-image').style.filter = 'brightness(0)'; // Reset image filter
             currentQuestion++;

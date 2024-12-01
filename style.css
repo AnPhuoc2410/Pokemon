@@ -33,6 +33,7 @@ h1 {
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     width: 90%;
     max-width: 400px;
+    text-align: center;
 }
 
 /* Pokémon Image */
@@ -41,6 +42,7 @@ h1 {
     max-width: 300px;
     margin: 20px auto;
     display: block;
+    filter: grayscale(100%) brightness(0.5);
     transition: filter 0.3s ease;
     border-radius: 15px;
 }
@@ -114,6 +116,20 @@ h1 {
 .catch-btn:hover {
     background: #f94144;
 }
+.view-details-btn {
+    display: none;
+}
+#details-container {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#pokemon-details {
+    line-height: 1.6;
+}
 
 /* Silhouette */
 .silhouette {
@@ -183,8 +199,10 @@ h1 {
 
 .pokemon-item img {
     width: 80px;
-    height: 80px;
+    height: auto;
     margin-bottom: 10px;
+    filter: grayscale(100%) brightness(0.5);
+    transition: filter 0.3s ease;
 }
 
 /* Responsive Design */
