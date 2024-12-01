@@ -5,6 +5,13 @@ body, h1, button {
     font-family: 'Arial', sans-serif;
     box-sizing: border-box;
 }
+h1{
+    font-family: 'Press Start 2P', cursive;
+    border-radius: 5px;
+    color: #2a75bb;
+    cursor: pointer;
+    font-size: 2.5rem;
+}
 
 /* Body Styling */
 body {
